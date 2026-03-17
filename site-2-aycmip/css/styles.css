@@ -1709,17 +1709,24 @@ h1, h2, h3, h4, h5 {
 .treatment__list {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 18px;
 }
 
 .treatment__list li {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 14px;
   font-family: 'Roboto', sans-serif;
   font-size: var(--text-base);
   color: var(--text-dark);
-  line-height: 1.6;
+  line-height: 1.65;
+  padding-bottom: 2px;
+}
+
+@media (min-width: 768px) {
+  .treatment__list {
+    gap: 22px;
+  }
 }
 
 .treatment__list li::before {
