@@ -37,9 +37,9 @@
             <a href="../avispas/" role="menuitem">🐝 Avispas</a>
             <a href="#" role="menuitem">🪲 Chinche</a>
             <a href="../cucarachas/" role="menuitem">🪲 Cucarachas</a>
-            <a href="#" role="menuitem">🦟 Desinsectado</a>
-            <a href="#" role="menuitem">🐜 Hormigas</a>
-            <a href="#" role="menuitem">🐦 Palomas</a>
+            <a href="../desinsectado/" role="menuitem">🦟 Desinsectado</a>
+            <a href="../hormigas/" role="menuitem">🐜 Hormigas</a>
+            <a href="../palomas/" role="menuitem">🐦 Palomas</a>
             <a href="../ratones/" role="menuitem">🐀 Ratones</a>
             <a href="../termitas/" role="menuitem">🛡️ Termitas</a>
           </div>
@@ -85,9 +85,9 @@
             <a href="../avispas/">🐝 Avispas</a>
             <a href="#">🪲 Chinche</a>
             <a href="../cucarachas/">🪲 Cucarachas</a>
-            <a href="#">🦟 Desinsectado</a>
-            <a href="#">🐜 Hormigas</a>
-            <a href="#">🐦 Palomas</a>
+            <a href="../desinsectado/">🦟 Desinsectado</a>
+            <a href="../hormigas/">🐜 Hormigas</a>
+            <a href="../palomas/">🐦 Palomas</a>
             <a href="../ratones/">🐀 Ratones</a>
             <a href="../termitas/">🛡️ Termitas</a>
           </div>
@@ -118,7 +118,7 @@
     </div>
   </section>
 
-  <!-- SPECIES SECTION (no images for rodents — text-only cards) -->
+  <!-- SPECIES SECTION -->
   <section class="species-section" aria-labelledby="species-title">
     <img src="../img/leaf.webp" alt="" class="species-section__leaf species-section__leaf--tl" aria-hidden="true" />
     <img src="../img/leaf-2.webp" alt="" class="species-section__leaf species-section__leaf--br" aria-hidden="true" />
@@ -126,43 +126,45 @@
     <div class="container">
       <h2 class="species-section__title fade-in" id="species-title">Especies que Controlamos</h2>
 
-      <!-- Text-only species cards -->
-      <div class="species-list" style="gap: 36px;">
-
-        <!-- Guarén -->
-        <div class="fade-in" style="background: var(--bg-light); border-radius: 20px; padding: 36px; display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: start;">
-          <div style="width: 72px; height: 72px; border-radius: 50%; background: var(--green-primary); display: flex; align-items: center; justify-content: center; font-size: 2rem; flex-shrink: 0;">🐀</div>
-          <div>
-            <span class="species-card__tag">Subterráneo</span>
-            <h3 class="species-card__name">Guarén</h3>
-            <p class="species-card__sci">Rattus norvegicus</p>
-            <p class="species-card__desc">La rata de alcantarilla o guarén es la más robusta. Puede pesar hasta 500 g. Habita en sectores bajos, cloacas, bodegas y excavaciones en el suelo. Es buena nadadora y se desplaza por las tuberías de alcantarillado. Transmite Leptospirosis y Hantavirus a través de su orina y heces.</p>
-          </div>
+      <!-- Guarén -->
+      <div class="species-card fade-in">
+        <div class="species-card__image">
+          <img src="../img/raton-guaren.jpg" alt="Guarén (Rattus norvegicus)" loading="lazy" />
         </div>
-
-        <!-- Rata Negra -->
-        <div class="fade-in" style="background: var(--bg-light); border-radius: 20px; padding: 36px; display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: start;">
-          <div style="width: 72px; height: 72px; border-radius: 50%; background: var(--green-primary); display: flex; align-items: center; justify-content: center; font-size: 2rem; flex-shrink: 0;">🐁</div>
-          <div>
-            <span class="species-card__tag">Trepadora</span>
-            <h3 class="species-card__name">Rata Negra o Techera</h3>
-            <p class="species-card__sci">Rattus rattus</p>
-            <p class="species-card__desc">Ágil trepadora que prefiere las alturas. Se ubica en áticos, falsos techos, copas de árboles y estructuras elevadas. Más delgada que el guarén, con orejas grandes y cola larga. Provoca daños severos en instalaciones eléctricas al roer cables, constituyendo un riesgo real de incendio.</p>
-          </div>
+        <div class="species-card__body">
+          <span class="species-card__tag">Subterráneo</span>
+          <h3 class="species-card__name">Guarén</h3>
+          <p class="species-card__sci">Rattus norvegicus</p>
+          <p class="species-card__desc">La rata de alcantarilla o guarén es la más robusta. Puede pesar hasta 500 g. Habita en sectores bajos, cloacas, bodegas y excavaciones en el suelo. Es buena nadadora y se desplaza por las tuberías de alcantarillado. Transmite Leptospirosis y Hantavirus a través de su orina y heces.</p>
         </div>
-
-        <!-- Laucha -->
-        <div class="fade-in" style="background: var(--bg-light); border-radius: 20px; padding: 36px; display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: start;">
-          <div style="width: 72px; height: 72px; border-radius: 50%; background: var(--green-primary); display: flex; align-items: center; justify-content: center; font-size: 2rem; flex-shrink: 0;">🐭</div>
-          <div>
-            <span class="species-card__tag">Interior</span>
-            <h3 class="species-card__name">Laucha</h3>
-            <p class="species-card__sci">Mus musculus</p>
-            <p class="species-card__desc">La más pequeña pero con la tasa de reproducción más rápida: puede tener hasta 10 crías por camada y 8 camadas al año. Se introduce por orificios de apenas 6 mm de diámetro. Contamina alimentos y superficies con su orina y heces. Muy común en cocinas, despensas y almacenes.</p>
-          </div>
-        </div>
-
       </div>
+
+      <!-- Rata Negra -->
+      <div class="species-card species-card--reversed fade-in">
+        <div class="species-card__image">
+          <img src="../img/rata-negra.png" alt="Rata Negra (Rattus rattus)" loading="lazy" />
+        </div>
+        <div class="species-card__body">
+          <span class="species-card__tag">Trepadora</span>
+          <h3 class="species-card__name">Rata Negra o Techera</h3>
+          <p class="species-card__sci">Rattus rattus</p>
+          <p class="species-card__desc">Ágil trepadora que prefiere las alturas. Se ubica en áticos, falsos techos, copas de árboles y estructuras elevadas. Más delgada que el guarén, con orejas grandes y cola larga. Provoca daños severos en instalaciones eléctricas al roer cables, constituyendo un riesgo real de incendio.</p>
+        </div>
+      </div>
+
+      <!-- Laucha -->
+      <div class="species-card fade-in">
+        <div class="species-card__image">
+          <img src="../img/laucha.jpg" alt="Laucha (Mus musculus)" loading="lazy" />
+        </div>
+        <div class="species-card__body">
+          <span class="species-card__tag">Interior</span>
+          <h3 class="species-card__name">Laucha</h3>
+          <p class="species-card__sci">Mus musculus</p>
+          <p class="species-card__desc">La más pequeña pero con la tasa de reproducción más rápida: puede tener hasta 10 crías por camada y 8 camadas al año. Se introduce por orificios de apenas 6 mm de diámetro. Contamina alimentos y superficies con su orina y heces. Muy común en cocinas, despensas y almacenes.</p>
+        </div>
+      </div>
+
     </div>
   </section>
 
@@ -243,8 +245,8 @@
             <li><a href="../ratones/">Ratones</a></li>
             <li><a href="../termitas/">Termitas</a></li>
             <li><a href="../cucarachas/">Cucarachas</a></li>
-            <li><a href="#">Hormigas</a></li>
-            <li><a href="#">Desinsectado</a></li>
+            <li><a href="../hormigas/">Hormigas</a></li>
+            <li><a href="../desinsectado/">Desinsectado</a></li>
           </ul>
         </div>
         <div>
