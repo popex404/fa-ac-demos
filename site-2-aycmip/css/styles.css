@@ -378,7 +378,7 @@ ul {
 .hero__bg-image {
   position: absolute;
   inset: 0;
-  background-image: url('../../Imagenes/rrss_empresarial_control\ plagas.png');
+  background-image: url('../Imagenes/rrss_empresarial_control\ plagas.png');
   background-size: cover;
   background-position: center;
   opacity: 0.17;
