@@ -2,6 +2,7 @@
  * main.js — A&C Soluciones Agrícolas y Urbanas
  * Vanilla JS only — no frameworks or dependencies
  * Works gracefully without JS (progressive enhancement)
+ * Mobile-first: all interactions optimised for touch & phone
  */
 
 (function () {
@@ -41,12 +42,10 @@
 
   /* ─────────────────────────────────────────
      2. SMOOTH SCROLL for anchor nav links
-        (CSS scroll-behavior handles most cases,
-         but this adds cross-browser reliability
-         and accounts for sticky navbar offset)
+        CSS scroll-behavior handles most cases;
+        this adds cross-browser reliability and
+        accounts for sticky navbar offset
      ───────────────────────────────────────── */
-  var navbarHeight = navbar ? navbar.offsetHeight : 72;
-
   function getNavbarHeight() {
     return navbar ? navbar.offsetHeight : 72;
   }
@@ -57,7 +56,7 @@
 
     var targetTop = target.getBoundingClientRect().top + window.scrollY;
     var offset = getNavbarHeight() + 8; // 8px breathing room
-    var destination = targetTop - offset;
+    var destination = Math.max(0, targetTop - offset);
 
     window.scrollTo({
       top: destination,
@@ -88,41 +87,51 @@
 
   /* ─────────────────────────────────────────
      3. SECTION REVEAL ANIMATION
-        Fade-in sections as they enter viewport
+        Staggered fade-in as elements enter viewport
         Uses IntersectionObserver for performance
      ───────────────────────────────────────── */
   if ('IntersectionObserver' in window) {
-    // Add initial hidden state via JS (progressive enhancement)
-    var revealTargets = document.querySelectorAll(
-      '.pain__card, .solution__card, .proof__service-card, .proof__badge, .testimonial-card, .value-stack__item, .guarantee__card'
-    );
+    var revealSelectors = [
+      '.pain__card',
+      '.solution__card',
+      '.solution__segment',
+      '.proof__stat',
+      '.proof__service-card',
+      '.proof__badge',
+      '.testimonial-card',
+      '.value-stack__item',
+      '.guarantee__card',
+      '.hero__trust-item'
+    ].join(', ');
+
+    var revealTargets = document.querySelectorAll(revealSelectors);
 
     revealTargets.forEach(function (el) {
       el.style.opacity = '0';
-      el.style.transform = 'translateY(24px)';
-      el.style.transition = 'opacity 0.55s ease, transform 0.55s ease';
+      el.style.transform = 'translateY(22px)';
+      el.style.transition = 'opacity 0.52s ease, transform 0.52s ease';
     });
 
     var revealObserver = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          var el = entry.target;
-          // Stagger siblings by their index in the parent
-          var siblings = el.parentElement ? Array.from(el.parentElement.children) : [];
-          var index = siblings.indexOf(el);
-          var delay = Math.min(index * 80, 320); // cap at 320ms
+        if (!entry.isIntersecting) return;
 
-          setTimeout(function () {
-            el.style.opacity = '1';
-            el.style.transform = 'translateY(0)';
-          }, delay);
+        var el = entry.target;
+        // Stagger siblings by index within their parent
+        var siblings = el.parentElement ? Array.from(el.parentElement.children) : [];
+        var index = siblings.indexOf(el);
+        var delay = Math.min(index * 75, 300); // cap at 300ms
 
-          revealObserver.unobserve(el);
-        }
+        setTimeout(function () {
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+        }, delay);
+
+        revealObserver.unobserve(el);
       });
     }, {
-      threshold: 0.12,
-      rootMargin: '0px 0px -40px 0px'
+      threshold: 0.10,
+      rootMargin: '0px 0px -36px 0px'
     });
 
     revealTargets.forEach(function (el) {
@@ -150,21 +159,20 @@
           whatsappFab.removeAttribute('aria-hidden');
         }
       });
-    }, { threshold: 0.1 });
+    }, { threshold: 0.10 });
 
-    whatsappFab.style.transition = 'opacity 0.3s ease';
     footerObserver.observe(footer);
   }
 
   /* ─────────────────────────────────────────
-     5. ACTIVE NAV HIGHLIGHT (optional UX)
-        Tracks current section on scroll
+     5. ACTIVE SECTION TRACKING
+        Tracks current section in viewport —
+        available for analytics or future nav highlighting
      ───────────────────────────────────────── */
   var sections = document.querySelectorAll('section[id]');
+  var activeSection = '';
 
   if (sections.length && 'IntersectionObserver' in window) {
-    var activeSection = '';
-
     var sectionObserver = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (entry.isIntersecting) {
@@ -181,22 +189,106 @@
   }
 
   /* ─────────────────────────────────────────
-     6. PHONE NUMBER CLICK TRACKING
-        Console log for analytics integration
-        Replace with your analytics event if needed
+     6. STATS COUNTER ANIMATION
+        Counts up numbers in .proof__stat-number
+        when stats row enters the viewport
+     ───────────────────────────────────────── */
+  function animateCounter(el, target, suffix, duration) {
+    var start = 0;
+    var startTime = null;
+    var isNumeric = !isNaN(parseInt(target, 10));
+
+    if (!isNumeric) {
+      // Non-numeric stat like "24/7" — just reveal it
+      el.style.opacity = '1';
+      return;
+    }
+
+    var numTarget = parseInt(target, 10);
+
+    function step(timestamp) {
+      if (!startTime) startTime = timestamp;
+      var progress = Math.min((timestamp - startTime) / duration, 1);
+      var eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      var current = Math.floor(eased * numTarget);
+
+      el.textContent = current + (suffix || '');
+
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
+      } else {
+        el.textContent = numTarget + (suffix || '');
+      }
+    }
+
+    window.requestAnimationFrame(step);
+  }
+
+  var statsRow = document.querySelector('.proof__stats');
+  var statNumbers = document.querySelectorAll('.proof__stat-number');
+
+  if (statsRow && statNumbers.length && 'IntersectionObserver' in window) {
+    var statsDone = false;
+
+    var statsObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting && !statsDone) {
+          statsDone = true;
+          statNumbers.forEach(function (el) {
+            var raw = el.textContent.trim();
+            // Extract numeric prefix and any suffix like '+' or '/'
+            var match = raw.match(/^(\d+)(.*)$/);
+            if (match) {
+              animateCounter(el, match[1], match[2], 1600);
+            }
+          });
+          statsObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.30 });
+
+    statsObserver.observe(statsRow);
+  }
+
+  /* ─────────────────────────────────────────
+     7. CONVERSION TRACKING — phone & WhatsApp
+        Replace console.log with your analytics
+        call (e.g. gtag or fbq) when ready
      ───────────────────────────────────────── */
   document.addEventListener('click', function (event) {
-    var link = event.target.closest('a[href^="tel:"]');
-    if (!link) return;
-    // EDITAR: replace console.log with your analytics call, e.g. gtag or fbq
-    console.log('[A&C Analytics] Phone CTA clicked:', link.href);
+    // Phone click
+    var phoneLink = event.target.closest('a[href^="tel:"]');
+    if (phoneLink) {
+      // EDITAR: replace with your analytics event
+      // Example: gtag('event', 'phone_click', { event_category: 'CTA' });
+      console.log('[A&C Analytics] Phone CTA clicked:', phoneLink.href);
+      return;
+    }
+
+    // WhatsApp click
+    var waLink = event.target.closest('a[href^="https://wa.me"]');
+    if (waLink) {
+      // EDITAR: replace with your analytics event
+      // Example: gtag('event', 'whatsapp_click', { event_category: 'CTA' });
+      console.log('[A&C Analytics] WhatsApp CTA clicked:', waLink.href);
+    }
   });
 
-  document.addEventListener('click', function (event) {
-    var link = event.target.closest('a[href^="https://wa.me"]');
-    if (!link) return;
-    // EDITAR: replace console.log with your analytics call, e.g. gtag or fbq
-    console.log('[A&C Analytics] WhatsApp CTA clicked:', link.href);
-  });
+  /* ─────────────────────────────────────────
+     8. TOUCH FEEDBACK — immediate visual tap
+        response on mobile for all buttons
+        Adds .is-tapped class briefly on touch
+     ───────────────────────────────────────── */
+  if ('ontouchstart' in window) {
+    document.addEventListener('touchstart', function (event) {
+      var btn = event.target.closest('.btn');
+      if (!btn) return;
+
+      btn.classList.add('is-tapped');
+      setTimeout(function () {
+        btn.classList.remove('is-tapped');
+      }, 200);
+    }, { passive: true });
+  }
 
 })();
