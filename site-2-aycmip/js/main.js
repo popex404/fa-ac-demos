@@ -1,242 +1,225 @@
 /**
- * AYCmip.cl — main.js
- * Vanilla JS only: navbar scroll, hamburger drawer, counter animation,
- * accordion, scroll reveal, FAQ, FAB tooltip.
+ * AYC MiP — main.js
+ * Vanilla JS: navbar scroll, hamburger drawer, count-up, FAQ accordion,
+ * scroll reveal, dropdown, WhatsApp FAB auto-hide near footer.
  */
 
 (function () {
   'use strict';
 
   /* ============================================================
-     NAVBAR — scroll shadow + hamburger drawer
+     NAVBAR SCROLL SHADOW
      ============================================================ */
-  const navbar        = document.getElementById('navbar');
-  const hamburger     = document.getElementById('hamburgerBtn');
-  const drawer        = document.getElementById('navDrawer');
-  const overlay       = document.getElementById('navOverlay');
-  const drawerLinks   = document.querySelectorAll('.navbar__drawer-links a, .navbar__drawer-actions a');
-
-  // Scroll shadow
-  function onScroll() {
-    if (window.scrollY > 12) {
-      navbar.classList.add('scrolled');
-    } else {
-      navbar.classList.remove('scrolled');
-    }
+  const navbar = document.querySelector('.navbar');
+  if (navbar) {
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
   }
-  window.addEventListener('scroll', onScroll, { passive: true });
 
-  // Open / close drawer
+  /* ============================================================
+     DESKTOP DROPDOWN — keyboard/click toggle support
+     ============================================================ */
+  const dropdowns = document.querySelectorAll('.nav-dropdown');
+  dropdowns.forEach((dropdown) => {
+    const trigger = dropdown.querySelector('.nav-dropdown__trigger');
+    if (!trigger) return;
+
+    // Toggle on click for accessibility
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = dropdown.classList.contains('open');
+      // Close all first
+      dropdowns.forEach((d) => d.classList.remove('open'));
+      if (!isOpen) dropdown.classList.add('open');
+    });
+  });
+
+  // Close dropdown on outside click
+  document.addEventListener('click', () => {
+    dropdowns.forEach((d) => d.classList.remove('open'));
+  });
+
+  /* ============================================================
+     HAMBURGER + MOBILE DRAWER
+     ============================================================ */
+  const hamburger = document.querySelector('.hamburger');
+  const drawer = document.querySelector('.mobile-drawer');
+  const drawerOverlay = drawer && drawer.querySelector('.mobile-drawer__overlay');
+  const drawerCloseBtn = drawer && drawer.querySelector('.mobile-drawer__close-btn');
+
   function openDrawer() {
-    drawer.classList.add('is-open');
-    overlay.classList.add('is-open');
-    hamburger.classList.add('is-open');
-    hamburger.setAttribute('aria-expanded', 'true');
+    if (!drawer) return;
+    drawer.classList.add('open');
     document.body.style.overflow = 'hidden';
+    if (hamburger) hamburger.classList.add('open');
   }
 
   function closeDrawer() {
-    drawer.classList.remove('is-open');
-    overlay.classList.remove('is-open');
-    hamburger.classList.remove('is-open');
-    hamburger.setAttribute('aria-expanded', 'false');
+    if (!drawer) return;
+    drawer.classList.remove('open');
     document.body.style.overflow = '';
+    if (hamburger) hamburger.classList.remove('open');
   }
 
-  hamburger.addEventListener('click', function () {
-    if (drawer.classList.contains('is-open')) {
-      closeDrawer();
-    } else {
-      openDrawer();
-    }
-  });
-
-  overlay.addEventListener('click', closeDrawer);
-
-  drawerLinks.forEach(function (link) {
-    link.addEventListener('click', closeDrawer);
-  });
-
-  // Keyboard: close on Escape
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && drawer.classList.contains('is-open')) {
-      closeDrawer();
-    }
-  });
-
-  /* ============================================================
-     COUNTER ANIMATION
-     ============================================================ */
-  function animateCounter(el, target, duration, suffix) {
-    var start     = 0;
-    var startTime = null;
-    var isFloat   = target !== Math.floor(target);
-
-    function step(timestamp) {
-      if (!startTime) startTime = timestamp;
-      var elapsed  = timestamp - startTime;
-      var progress = Math.min(elapsed / duration, 1);
-      // Ease out quad
-      var ease     = 1 - Math.pow(1 - progress, 3);
-      var current  = start + (target - start) * ease;
-
-      if (isFloat) {
-        el.textContent = current.toFixed(1) + suffix;
+  if (hamburger) {
+    hamburger.addEventListener('click', () => {
+      if (drawer && drawer.classList.contains('open')) {
+        closeDrawer();
       } else {
-        el.textContent = Math.floor(current) + suffix;
+        openDrawer();
       }
-
-      if (progress < 1) {
-        requestAnimationFrame(step);
-      } else {
-        el.textContent = target + suffix;
-      }
-    }
-
-    requestAnimationFrame(step);
-  }
-
-  var counterItems = document.querySelectorAll('[data-counter]');
-  var countersStarted = false;
-
-  function startCounters() {
-    if (countersStarted) return;
-    countersStarted = true;
-
-    counterItems.forEach(function (el) {
-      var target   = parseFloat(el.dataset.counter);
-      var suffix   = el.dataset.suffix || '';
-      var duration = parseInt(el.dataset.duration || '1800', 10);
-      animateCounter(el, target, duration, suffix);
     });
   }
 
-  if (counterItems.length > 0) {
-    var statsSection = document.getElementById('stats');
+  if (drawerOverlay) {
+    drawerOverlay.addEventListener('click', closeDrawer);
+  }
 
-    if ('IntersectionObserver' in window && statsSection) {
-      var statsObserver = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            startCounters();
-            statsObserver.disconnect();
+  if (drawerCloseBtn) {
+    drawerCloseBtn.addEventListener('click', closeDrawer);
+  }
+
+  // Close on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeDrawer();
+  });
+
+  // Close drawer when any link is clicked
+  if (drawer) {
+    drawer.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', closeDrawer);
+    });
+  }
+
+  /* ============================================================
+     MOBILE DROPDOWN IN DRAWER
+     ============================================================ */
+  const mobTriggers = document.querySelectorAll('.mob-dropdown-trigger');
+  mobTriggers.forEach((trigger) => {
+    trigger.addEventListener('click', () => {
+      const content = trigger.nextElementSibling;
+      if (!content) return;
+      const isOpen = content.classList.contains('open');
+      trigger.classList.toggle('open', !isOpen);
+      content.classList.toggle('open', !isOpen);
+    });
+  });
+
+  /* ============================================================
+     COUNT-UP ANIMATION (IntersectionObserver)
+     ============================================================ */
+  const counters = document.querySelectorAll('[data-count]');
+
+  function animateCounter(el) {
+    const target = el.getAttribute('data-count');
+    const suffix = el.getAttribute('data-suffix') || '';
+    const prefix = el.getAttribute('data-prefix') || '';
+    const numericTarget = parseFloat(target);
+    const isInt = Number.isInteger(numericTarget);
+    const duration = 2000;
+    const startTime = performance.now();
+
+    function update(currentTime) {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // Ease-out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = numericTarget * eased;
+      el.textContent = prefix + (isInt ? Math.round(current) : current.toFixed(1)) + suffix;
+      if (progress < 1) {
+        requestAnimationFrame(update);
+      } else {
+        el.textContent = prefix + target + suffix;
+      }
+    }
+
+    requestAnimationFrame(update);
+  }
+
+  if (counters.length > 0) {
+    const counterObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !entry.target.dataset.animated) {
+            entry.target.dataset.animated = 'true';
+            animateCounter(entry.target);
           }
         });
-      }, { threshold: 0.25 });
+      },
+      { threshold: 0.5 }
+    );
 
-      statsObserver.observe(statsSection);
-    } else {
-      // Fallback: start immediately
-      startCounters();
-    }
+    counters.forEach((counter) => counterObserver.observe(counter));
   }
 
   /* ============================================================
-     ACCORDION
+     FAQ ACCORDION
      ============================================================ */
-  var accordionItems = document.querySelectorAll('.accordion-item');
+  const faqItems = document.querySelectorAll('.faq-item');
 
-  accordionItems.forEach(function (item) {
-    var header = item.querySelector('.accordion-header');
+  faqItems.forEach((item) => {
+    const header = item.querySelector('.faq-item__header');
+    if (!header) return;
 
-    header.addEventListener('click', function () {
-      var isOpen = item.classList.contains('is-open');
-
+    header.addEventListener('click', () => {
+      const isActive = item.classList.contains('active');
       // Close all
-      accordionItems.forEach(function (other) {
-        other.classList.remove('is-open');
-        other.querySelector('.accordion-header').setAttribute('aria-expanded', 'false');
-      });
-
-      // Toggle clicked
-      if (!isOpen) {
-        item.classList.add('is-open');
-        header.setAttribute('aria-expanded', 'true');
+      faqItems.forEach((fi) => fi.classList.remove('active'));
+      // Open clicked if was not active
+      if (!isActive) {
+        item.classList.add('active');
       }
     });
-
-    // Keyboard: Space / Enter already trigger click on button
   });
 
   /* ============================================================
      SCROLL REVEAL (IntersectionObserver)
      ============================================================ */
-  var revealEls = document.querySelectorAll('.reveal');
+  const revealEls = document.querySelectorAll('.fade-in, .stagger-children');
 
-  if ('IntersectionObserver' in window && revealEls.length > 0) {
-    var revealObserver = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          revealObserver.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-
-    revealEls.forEach(function (el) {
-      revealObserver.observe(el);
-    });
-  } else {
-    // Fallback: show all
-    revealEls.forEach(function (el) {
-      el.classList.add('is-visible');
-    });
-  }
-
-  /* ============================================================
-     MARQUEE — duplicate nodes for seamless loop
-     ============================================================ */
-  var marqueeTrack = document.querySelector('.hero__marquee-track');
-  if (marqueeTrack) {
-    // We already have 2 copies in HTML; ensure there are enough
-    // The CSS animation uses translateX(-50%) on a 2-copy track
-    // Nothing extra needed in JS — CSS handles it.
-  }
-
-  /* ============================================================
-     SMOOTH SCROLL for anchor links
-     ============================================================ */
-  var anchorLinks = document.querySelectorAll('a[href^="#"]');
-  anchorLinks.forEach(function (link) {
-    link.addEventListener('click', function (e) {
-      var href = link.getAttribute('href');
-      if (href === '#') return;
-
-      var target = document.querySelector(href);
-      if (target) {
-        e.preventDefault();
-        var navH = navbar ? navbar.getBoundingClientRect().height : 94;
-        var targetTop = target.getBoundingClientRect().top + window.scrollY - navH;
-
-        window.scrollTo({ top: targetTop, behavior: 'smooth' });
-      }
-    });
-  });
-
-  /* ============================================================
-     ACTIVE NAV LINK on scroll
-     ============================================================ */
-  var sections     = document.querySelectorAll('section[id]');
-  var navLinksList = document.querySelectorAll('.navbar__links a[href^="#"]');
-
-  function updateActiveLink() {
-    var scrollPos = window.scrollY + 120;
-
-    sections.forEach(function (section) {
-      if (
-        section.offsetTop <= scrollPos &&
-        section.offsetTop + section.offsetHeight > scrollPos
-      ) {
-        navLinksList.forEach(function (link) {
-          link.classList.remove('active');
-          if (link.getAttribute('href') === '#' + section.id) {
-            link.classList.add('active');
+  if (revealEls.length > 0) {
+    const revealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            revealObserver.unobserve(entry.target);
           }
         });
-      }
-    });
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+    );
+
+    revealEls.forEach((el) => revealObserver.observe(el));
   }
 
-  window.addEventListener('scroll', updateActiveLink, { passive: true });
+  /* ============================================================
+     FLOATING WHATSAPP FAB — auto-hide near footer
+     ============================================================ */
+  const waFab = document.querySelector('.wa-fab');
+  const footer = document.querySelector('.footer');
+
+  if (waFab && footer) {
+    const fabObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            waFab.classList.add('hidden');
+          } else {
+            waFab.classList.remove('hidden');
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+    fabObserver.observe(footer);
+  }
 
 })();
