@@ -68,6 +68,11 @@
     .card-final { border-color: #7c3aed; }
     .card-final .card-link { color: #c084fc; }
     .card-final:hover { border-color: #a855f7; }
+    .final-section { margin-top: 3rem; width: 100%; max-width: 900px; text-align: center; }
+    .final-section h2 { font-size: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #64748b; margin-bottom: 1.25rem; }
+    .final-section h2::before, .final-section h2::after { content: "──"; margin: 0 0.75rem; opacity: 0.4; }
+    .final-card-wrap { display: flex; justify-content: center; }
+    .final-card-wrap .card { max-width: 320px; width: 100%; }
     footer { margin-top: 3rem; color: #475569; font-size: 0.8rem; text-align: center; }
   </style>
 </head>
@@ -95,12 +100,18 @@
       <p>Landing page de conversión pura basada en la Videollamada 1 con Francisco. Framework 100M Deals aplicado al detalle.</p>
       <span class="card-link">Ver versión C →</span>
     </a>
-    <a href="https://www.aycmip.cl" target="_blank" rel="noopener noreferrer" class="card card-final">
-      <span class="card-tag tag-final">Versión Final</span>
-      <h2>Sitio definitivo</h2>
-      <p>Versión final aplicando todos los feedback recibidos. Hormozi + subpáginas por servicio + SEO + slider testimonios + schemas.</p>
-      <span class="card-link">Ver sitio final →</span>
-    </a>
+  </div>
+
+  <div class="final-section">
+    <h2>Versión definitiva</h2>
+    <div class="final-card-wrap">
+      <a href="https://popex404.github.io/fa-ac/index.html" target="_blank" rel="noopener noreferrer" class="card card-final">
+        <span class="card-tag tag-final">Versión Final</span>
+        <h2>Sitio definitivo</h2>
+        <p>Versión final aplicando todos los feedback recibidos. Hormozi + subpáginas por servicio + SEO + slider testimonios + schemas.</p>
+        <span class="card-link">Ver sitio final →</span>
+      </a>
+    </div>
   </div>
 
   <footer>A&C Soluciones Agrícolas y Urbanas · Proyecto FA-control-plagas · Javier García Pinilla 2026</footer>
