@@ -1,4 +1,4 @@
-# A&C Soluciones — Demos
+# A&C Soluciones Demos
 
 Trabajo de desarrollo web para A&C Soluciones (aycmip.cl), empresa de asesoría en
 medioambiente e ingeniería con base en Chile.
